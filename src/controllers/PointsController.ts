@@ -1,7 +1,24 @@
 import conn from '../database/connection';
-import {Request, Response} from 'express';
+import {Request, Response, json} from 'express';
 
 class PointsController {
+    async index(request: Request, response: Response){
+        // 3 filters cidade, uf, items
+        let { cidade, uf, items } = request.query;
+        let parsedItems = String(items).split(',').map(item => Number(item.trim()));
+
+        let points = await conn('points')
+                            .join('point_items', 'points.id', '=', 'point_items.point_id')
+                            .whereIn('point_items.item_id', parsedItems)
+                            .where('city', String(cidade))
+                            .where('uf', String(uf))
+                            .distinct()
+                            .select('points.*');
+
+        return response.json(points);
+    }
+
+
     async show(request: Request, response: Response){
         const { id } = request.params;
 
@@ -31,7 +48,7 @@ class PointsController {
         } = request.body;
         
         let point = {
-            image:'image-temp',
+            image:'https://images.unsplash.com/photo-1501523460185-2aa5d2a0f981?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60',
             name,
             email, 
             whatsapp, 
