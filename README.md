@@ -13,4 +13,4 @@ You can visualize at [__HERE__](http://www.google.com).
         - Update
         - Transactions
 - SQLite;
-- MVC pattern
+- REST pattern
